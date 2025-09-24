@@ -9,6 +9,7 @@ import org.demointernetshop0505.service.exception.NotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -74,6 +75,10 @@ public class CodeConfirmationService {
         repository.save(confirmationCode);
 
         return user;
+    }
+
+    public List<ConfirmationCode> findCodesByUser(User user){
+        return repository.findByUser(user);
     }
 
 }

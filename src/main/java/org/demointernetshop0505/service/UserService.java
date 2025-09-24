@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.demointernetshop0505.dto.UserRequestDto;
 import org.demointernetshop0505.dto.UserResponseDto;
 import org.demointernetshop0505.dto.UserUpdateRequestDto;
+import org.demointernetshop0505.entity.ConfirmationCode;
 import org.demointernetshop0505.entity.User;
 import org.demointernetshop0505.repository.UserRepository;
 import org.demointernetshop0505.service.exception.AlreadyExistException;
@@ -75,7 +76,7 @@ public class UserService{
 
 
     @Transactional
-    public UserResponseDto confirmationEmail(String code){
+    public String confirmationEmail(String code){
 
         User user = codeConfirmationService.changeConfirmationStatusByCode(code);
 
@@ -83,7 +84,7 @@ public class UserService{
 
         repository.save(user);
 
-        return converter.toDto(user);
+        return "Email " + user.getEmail() + " успешно подтвержден";
     }
 
 
@@ -152,13 +153,24 @@ public class UserService{
     @Transactional
     public boolean renewCode(String email){
 
-        User user = repository.findByEmail(email)
-                .orElseThrow(() -> new NotFoundException("User with email: " + email + " not found"));
+        User user = getUserByEmailOrThrow(email);
 
         codeConfirmationService.confirmationCodeManager(user);
         return true;
     }
 
+
+    public List<ConfirmationCode> findCodesByUser(String email){
+        User user = getUserByEmailOrThrow(email);
+        return codeConfirmationService.findCodesByUser(user);
+
+    }
+
+
+    private User getUserByEmailOrThrow(String email){
+        return repository.findByEmail(email)
+                .orElseThrow(() -> new NotFoundException("User with email: " + email + " not found"));
+    }
 
 
 }
