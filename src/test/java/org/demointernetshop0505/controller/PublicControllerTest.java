@@ -19,9 +19,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -71,8 +71,11 @@ class PublicControllerTest {
     @AfterEach
     void dropDatabase(){
         // сперва дочерние таблицы, потом родительские
-        confirmationCodeRepository.truncateAndResetAutoIncrement();
-        userRepository.truncateAndResetAutoIncrement();
+//        confirmationCodeRepository.truncateAndResetAutoIncrement();
+//        userRepository.truncateAndResetAutoIncrement();
+
+        confirmationCodeRepository.deleteAll();
+        userRepository.deleteAll();
     }
 
     @Test
@@ -93,8 +96,8 @@ class PublicControllerTest {
                 .content(newUserJson))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.email").value("user1@company.com"))
-                .andExpect(jsonPath("$.role").value("USER"))
-                .andExpect(jsonPath("$.id").value("2"));
+                .andExpect(jsonPath("$.role").value("USER"));
+                //.andExpect(jsonPath("$.id").value("2"));
 
         // можно еще проверить, количество записей в БД - их должно быть 2
         // почему не можем проверить id?
@@ -103,6 +106,63 @@ class PublicControllerTest {
         // БД будет очищаться. НО!!! Порядковый номер записи (id) не будет "сбрасываться" на 1.
         // То есть мы не можем заранее сказать, а какой id будет у нашей записи для нового пользователя.
 
+
+    }
+
+    @Test
+    void testReturn400ForBadFormatEmail() throws Exception {
+        String newUserJson = """
+                {
+                "firstName":"user1",
+                "lastName":"user1",
+                "email":"badEmailFormat",
+                "hashPassword":"Pass11111"
+                }
+                """;
+
+        String requestPath = "/api/public/registration";
+
+        mockMvc.perform(post(requestPath)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(newUserJson))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errors[0].field").value("email"))
+                .andExpect(jsonPath("$.errors[0].rejectedValue").value("badEmailFormat"));
+    }
+
+    @Test
+    void testReturn400ForExistEmail() throws Exception {
+        String newUserJson = """
+                {
+                "firstName":"user1",
+                "lastName":"user1",
+                "email":"userTest@company.com",
+                "hashPassword":"Pass11111"
+                }
+                """;
+
+        String requestPath = "/api/public/registration";
+        String errorMessage = "User with email: userTest@company.com is already exist";
+
+        mockMvc.perform(post(requestPath)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(newUserJson))
+                .andExpect(status().isConflict())
+                .andExpect(content().string(errorMessage));
+    }
+
+    @Test
+    void testConfirmRegistration() throws Exception {
+        String requestPath = "/api/public/confirm";
+        String requestParamName = "code";
+        String requestParamValue = "someConfirmationCode";
+        String expectedValue = "Email userTest@company.com успешно подтвержден";
+
+
+        mockMvc.perform(get(requestPath)
+                .param(requestParamName, requestParamValue))
+                .andExpect(status().isOk())
+                .andExpect(content().string(expectedValue));
 
     }
 
