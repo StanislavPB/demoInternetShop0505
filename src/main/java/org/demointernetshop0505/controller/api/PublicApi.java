@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/public")
 public interface PublicApi {
 
-    @PostMapping("/register")
+    @PostMapping("/registration")
     public ResponseEntity<UserResponseDto> userRegistration(@Valid @RequestBody UserRequestDto request);
 
     @GetMapping("/confirm")

@@ -1,11 +1,14 @@
 package org.demointernetshop0505.service;
 
+import jakarta.transaction.Transactional;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.demointernetshop0505.entity.ConfirmationCode;
 import org.demointernetshop0505.entity.User;
 import org.demointernetshop0505.repository.ConfirmationCodeRepository;
 import org.demointernetshop0505.service.exception.NotFoundException;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -80,5 +83,6 @@ public class CodeConfirmationService {
     public List<ConfirmationCode> findCodesByUser(User user){
         return repository.findByUser(user);
     }
+
 
 }
