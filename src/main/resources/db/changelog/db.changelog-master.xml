@@ -7,9 +7,9 @@
         objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
 
 
-    <include file="01-create-users.xml"/>
-    <include file="02-create-files.xml"/>
-    <include file="03-create-confirmation-codes.xml"/>
-    <include file="04-insert-initial-data.xml"/>
+    <include file="/db/changelog/01-create-users.xml"/>
+    <include file="/db/changelog/02-create-files.xml"/>
+    <include file="/db/changelog/03-create-confirmation-codes.xml"/>
+<!--    <include file="src/main/resources/db/changelog/04-insert-initial-data.xml"/>-->
 
 </databaseChangeLog>
