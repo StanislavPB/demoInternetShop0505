@@ -5,11 +5,14 @@ import org.demointernetshop0505.service.exception.AlreadyExistException;
 import org.demointernetshop0505.service.exception.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.format.DateTimeParseException;
+import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -52,5 +55,19 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(responseMessage.toString(), HttpStatus.BAD_REQUEST);
     }
 
+
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public ResponseEntity<?> handleUsernameNotFoundException(UsernameNotFoundException e){
+        return ResponseEntity
+                .status(HttpStatus.NOT_ACCEPTABLE)
+                .body(Map.of("error","Такой пользователь на зарегистрирован"));
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<?> handleBadCredentialsException(BadCredentialsException e){
+        return ResponseEntity
+                .status(HttpStatus.NOT_ACCEPTABLE)
+                .body(Map.of("error","Неверный логин или пароль"));
+    }
 
 }

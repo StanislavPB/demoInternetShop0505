@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/api/users")
 public interface UserApi {
 
-    @GetMapping("/{userdId}")
+    @GetMapping("/{userId}")
     public ResponseEntity<UserResponseDto> getUserById(@PathVariable int userId);
 
     // можно добавить DeleteUser, UpdateUser

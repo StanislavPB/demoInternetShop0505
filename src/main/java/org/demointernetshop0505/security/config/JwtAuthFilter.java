@@ -33,9 +33,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
             if (jwt != null && jwtTokenProvider.validateToken(jwt)){
                 // получаем из jwt имя пользователя, который прислал запрос (у нас - email)
-                UserDetails userDetails = customUserDetailService.loadUserByUsername(jwt);
-                // создаем объект UserDetail который понимает Spring Security наполнив его данными нашего пользователя
                 String userName = jwtTokenProvider.getUsernameFromJwt(jwt);
+
+                // создаем объект UserDetail который понимает Spring Security наполнив его данными нашего пользователя
+                UserDetails userDetails = customUserDetailService.loadUserByUsername(userName);
+
                 // создаем необходимые объекты из Spring Security, чтобы наполнить SecurityContext
                 Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -43,6 +45,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         } catch (InvalidJwtException e) {
             System.out.println("ERROR !!! " + e.getMessage());
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("application/json");
+            response.getWriter().write("error: " + e.getMessage());
+            return; // важно чтобы ответ сразу вернулся пользователю, а не пошел дальше по цепочке фильтров
         }
 
         // обязательно надо в объект со спсиком фильтров применить добавленные изменения

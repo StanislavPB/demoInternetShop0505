@@ -2,11 +2,13 @@ package org.demointernetshop0505.security.service;
 
 import lombok.RequiredArgsConstructor;
 import org.demointernetshop0505.security.dto.AuthRequest;
+import org.demointernetshop0505.service.exception.NotFoundException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -19,12 +21,19 @@ public class AuthService {
 
     public String generateJwt(AuthRequest request){
 
-        UserDetails authUser = customUserDetailService.loadUserByUsername(request.getUsername());
+        // Проверим сами наличие пользователя в БД
+
+        try {
+            customUserDetailService.loadUserByUsername(request.getUsername());
+        } catch (UsernameNotFoundException e){
+            throw new NotFoundException("Пользователь с email: " + request.getUsername() + " в системе не зарегистрирован");
+        }
+
 
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        authUser.getUsername(),
-                        authUser.getPassword()
+                        request.getUsername(),
+                        request.getPassword()
                 )
         );
 
