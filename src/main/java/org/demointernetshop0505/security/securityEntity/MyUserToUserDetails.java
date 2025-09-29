@@ -8,7 +8,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
 @RequiredArgsConstructor
 public class MyUserToUserDetails implements UserDetails {
@@ -40,7 +39,7 @@ public class MyUserToUserDetails implements UserDetails {
     public boolean isAccountNonLocked() {
         // с учетом того, что у нашего User есть поле isBanned - то по идее тут нужно
         // добавить логику, которая проверяет у конкретного пользователя это поле
-        // и по рещультату проверки возвращает true или false
+        // и по результату проверки возвращает true или false
         return true;
     }
 

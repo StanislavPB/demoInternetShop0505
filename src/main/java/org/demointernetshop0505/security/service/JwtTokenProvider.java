@@ -13,9 +13,8 @@ import java.util.Date;
 @Service
 public class JwtTokenProvider {
 
-    private String jwtSecret = "98a76rg98agkjashgkjhsagfsaf8g7tofsa8ga";
-
-    private long jwtLifeTime = 600000; // 10 минут
+    private final String jwtSecret = "984hg493gh0439rthr0429uruj2309yh937gc763fe87t3f89723gf"; // Должно быть минимум 32 байта!
+    private final long jwtLifeTime = 600000; // 10 минут
 
 
     // создание нового токена JWT
