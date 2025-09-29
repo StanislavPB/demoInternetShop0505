@@ -1,6 +1,7 @@
 package org.demointernetshop0505.controller;
 
 import jakarta.validation.ConstraintViolationException;
+import org.demointernetshop0505.dto.ApiError;
 import org.demointernetshop0505.service.exception.AlreadyExistException;
 import org.demointernetshop0505.service.exception.NotFoundException;
 import org.springframework.http.HttpStatus;
@@ -10,7 +11,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
+import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.Map;
 
@@ -68,6 +71,19 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.NOT_ACCEPTABLE)
                 .body(Map.of("error","Неверный логин или пароль"));
+    }
+
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ApiError> handlerMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e){
+       ApiError error = ApiError.builder()
+               .error("Invalid parameter")
+               .message("Failed to convert parameter value")
+               .parameter(e.getName())
+               .rejectedValue(e.getValue())
+               .timestamp(LocalDateTime.now())
+               .build();
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
 }
