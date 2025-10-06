@@ -1,5 +1,7 @@
 package org.demointernetshop0505.service;
 
+import freemarker.template.TemplateException;
+import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +14,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -26,15 +29,15 @@ public class CodeConfirmationService {
 
     private final int EXPIRATION_PERIOD = 1;
 
-    private final String LINK_PATH = "localhost:8080/api/users/code/confirmation?code=";
+    private final String LINK_PATH = "localhost:8080/api/public/confirm?code=";
 
-    public void confirmationCodeManager(User user){
+    public void confirmationCodeManager(User user) throws MessagingException, TemplateException, IOException {
         String code = generateCode();
         saveConfirmationCode(code, user);
         sendCodeByEmail(code, user);
     }
 
-    private void sendCodeByEmail(String code, User user) {
+    private void sendCodeByEmail(String code, User user) throws MessagingException, TemplateException, IOException {
 
         String linkToSend = LINK_PATH + code;
 
