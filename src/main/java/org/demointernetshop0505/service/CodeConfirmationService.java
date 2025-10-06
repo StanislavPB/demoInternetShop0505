@@ -7,6 +7,7 @@ import org.demointernetshop0505.entity.ConfirmationCode;
 import org.demointernetshop0505.entity.User;
 import org.demointernetshop0505.repository.ConfirmationCodeRepository;
 import org.demointernetshop0505.service.exception.NotFoundException;
+import org.demointernetshop0505.service.mail.MailUtil;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ import java.util.UUID;
 public class CodeConfirmationService {
 
     private final ConfirmationCodeRepository repository;
+    private final MailUtil mailUtil;
 
     private final int EXPIRATION_PERIOD = 1;
 
@@ -36,9 +38,11 @@ public class CodeConfirmationService {
 
         String linkToSend = LINK_PATH + code;
 
-        // туту будет отправка пользователю письма с кодом
+        // тут будет отправка пользователю письма с кодом
 
         System.out.printf("Код подтверждения: " + linkToSend);
+
+        mailUtil.send(user, linkToSend);
 
 
     }
