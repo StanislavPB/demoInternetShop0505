@@ -13,6 +13,8 @@ import org.demointernetshop0505.repository.UserRepository;
 import org.demointernetshop0505.service.exception.AlreadyExistException;
 import org.demointernetshop0505.service.exception.NotFoundException;
 import org.demointernetshop0505.service.util.Converter;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -175,5 +177,14 @@ public class UserService{
                 .orElseThrow(() -> new NotFoundException("User with email: " + email + " not found"));
     }
 
+
+    public User getCurrentUser() {
+
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        String email = ((UserDetails) principal).getUsername();
+
+        return getUserByEmailOrThrow(email);
+    }
 
 }
