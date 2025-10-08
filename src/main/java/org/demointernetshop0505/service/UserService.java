@@ -1,5 +1,7 @@
 package org.demointernetshop0505.service;
 
+import freemarker.template.TemplateException;
+import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.demointernetshop0505.dto.UserRequestDto;
@@ -13,6 +15,7 @@ import org.demointernetshop0505.service.exception.NotFoundException;
 import org.demointernetshop0505.service.util.Converter;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -25,7 +28,7 @@ public class UserService{
     private final CodeConfirmationService codeConfirmationService;
 
     @Transactional
-    public UserResponseDto registration(UserRequestDto request){
+    public UserResponseDto registration(UserRequestDto request)  {
 
         if (repository.existsByEmail(request.getEmail())) {
             throw new AlreadyExistException("User with email: " + request.getEmail() + " is already exist");

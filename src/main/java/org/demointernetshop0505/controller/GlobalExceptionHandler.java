@@ -3,6 +3,7 @@ package org.demointernetshop0505.controller;
 import jakarta.validation.ConstraintViolationException;
 import org.demointernetshop0505.dto.ApiError;
 import org.demointernetshop0505.service.exception.AlreadyExistException;
+import org.demointernetshop0505.service.exception.MailSendingException;
 import org.demointernetshop0505.service.exception.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -40,6 +41,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handlerAlreadyExistException(AlreadyExistException e){
         return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
     }
+
+    @ExceptionHandler(MailSendingException.class)
+    public ResponseEntity<String> handlerMailSendingException(MailSendingException e){
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
 
 
     @ExceptionHandler(ConstraintViolationException.class)

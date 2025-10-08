@@ -31,13 +31,13 @@ public class CodeConfirmationService {
 
     private final String LINK_PATH = "localhost:8080/api/public/confirm?code=";
 
-    public void confirmationCodeManager(User user) throws MessagingException, TemplateException, IOException {
+    public void confirmationCodeManager(User user) {
         String code = generateCode();
         saveConfirmationCode(code, user);
         sendCodeByEmail(code, user);
     }
 
-    private void sendCodeByEmail(String code, User user) throws MessagingException, TemplateException, IOException {
+    private void sendCodeByEmail(String code, User user)  {
 
         String linkToSend = LINK_PATH + code;
 

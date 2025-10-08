@@ -7,6 +7,7 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import org.demointernetshop0505.entity.User;
+import org.demointernetshop0505.service.exception.MailSendingException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -24,13 +25,18 @@ public class MailUtil {
     private final Configuration freemakerConfiguration;
     private String messageSubject = "Code confirmation email";
 
-    public void send(User user, String linkToSend) throws MessagingException, IOException, TemplateException {
+    public void send(User user, String linkToSend) {
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, "UTF-8");
 
-        helper.setTo(user.getEmail());
-        helper.setSubject(messageSubject);
-        helper.setText(createConfirmationEmail(user, linkToSend), true);
+        try {
+            helper.setTo(user.getEmail());
+            helper.setSubject(messageSubject);
+            helper.setText(createConfirmationEmail(user, linkToSend), true);
+
+        } catch (Exception e){
+            throw new MailSendingException(e.getMessage());
+        }
 
         mailSender.send(message);
 
