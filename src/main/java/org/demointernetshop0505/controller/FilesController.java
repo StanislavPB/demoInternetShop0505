@@ -20,6 +20,6 @@ public class FilesController {
 
     @PostMapping("/files")
     public ResponseEntity<String> upload(@RequestParam("uploadFile")MultipartFile file) throws IOException {
-        return ResponseEntity.ok().body(service.upload(file));
+        return ResponseEntity.ok().body(service.uploadLocalStorage(file));
     }
 }
