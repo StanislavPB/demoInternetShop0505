@@ -10,6 +10,7 @@ import org.demointernetshop0505.entity.User;
 import org.demointernetshop0505.repository.ConfirmationCodeRepository;
 import org.demointernetshop0505.service.exception.NotFoundException;
 import org.demointernetshop0505.service.mail.MailUtil;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
@@ -27,9 +28,11 @@ public class CodeConfirmationService {
     private final ConfirmationCodeRepository repository;
     private final MailUtil mailUtil;
 
-    private final int EXPIRATION_PERIOD = 1;
+    @Value("${confirmation.expiration.period}")
+    private int EXPIRATION_PERIOD;
 
-    private final String LINK_PATH = "localhost:8080/api/public/confirm?code=";
+    @Value("${confirmation.path}")
+    private String LINK_PATH;
 
     public void confirmationCodeManager(User user) {
         String code = generateCode();
